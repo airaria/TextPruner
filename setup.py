@@ -40,7 +40,7 @@ setup(
     keywords="NLP deep learning transformers pruning pytorch",
     #license="",
     url="http://textpruner.hfl-rc.com",
-    packages=['textpruner'],
+    packages=find_packages('src'),
     package_dir={'':'src'},
     install_requires=[
         "transformers >= 4.0",
