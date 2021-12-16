@@ -8,7 +8,7 @@
 <p>
 <p align="center">
     <a href="https://github.com/airaria/TextPruner/blob/master/LICENSE">
-        <img alt="GitHub" src="https://img.shields.io/github/license/airaria/TextPruner.svg?color=blue&style=flat-square">
+        <img alt="GitHub" src="https://img.shields.io/github/license/airaria/TextPruner.svg?color=green&style=flat-square">
     </a>
     <a href="https://TextPruner.readthedocs.io/">
         <img alt="Documentation" src="https://img.shields.io/website?down_message=offline&label=Documentation&up_message=online&url=https%3A%2F%2FTextPruner.readthedocs.io">

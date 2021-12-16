@@ -99,7 +99,7 @@ class TransformerPruningConfig(Config):
     Warning:
         if ``ffn_even_masking`` is ``False``, the pruned model can not be save normally (we cannot load the model with the transformers libarary with the saved weights).
         So make sure to set ``save_model=False`` when calling ``TransformerPruner.prune()`` or ``PipelinePruner.prune()``. 
-        There are two way to workaround this:
+        There are two ways to avoid this:
         
         * Save the model in TorchScript format manually;
         * Set ``keep_shape=False`` when calling ``TransformerPruner.prune()`` or ``PipelinePruner.prune()``, so the full model can be saved. Then save the ``ffn_masks`` and ``head_masks``. When loading the model, load the full model and then prune it with the masks.

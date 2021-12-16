@@ -25,12 +25,12 @@ import shutil
 from pathlib import Path
 
 from setuptools import find_packages, setup
-from src.textpruner import __version__
+
+_version=open("src/textpruner/__init__.py").readlines()[0].split()[-1].strip("\"'")
 
 setup(
     name="textpruner",
-    version=__version__,
-    packages=['textpruner'],
+    version=_version,
     author="Ziqing Yang",
     author_email="ziqingyang@gmail.com",
     description="PyTorch-based model pruning toolkit for pre-trained language models",
@@ -39,7 +39,8 @@ setup(
     long_description_content_type="text/markdown",
     keywords="NLP deep learning transformers pruning pytorch",
     #license="",
-    url="http://textpruner.hfl-rc.com", #package_dir={"": "src"},
+    url="http://textpruner.hfl-rc.com",
+    packages=['textpruner'],
     package_dir={'':'src'},
     install_requires=[
         "transformers >= 4.0",

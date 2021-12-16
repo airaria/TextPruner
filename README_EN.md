@@ -8,7 +8,7 @@
 <p>
 <p align="center">
     <a href="https://github.com/airaria/TextPruner/blob/master/LICENSE">
-        <img alt="GitHub" src="https://img.shields.io/github/license/airaria/TextPruner.svg?color=blue&style=flat-square">
+        <img alt="GitHub" src="https://img.shields.io/github/license/airaria/TextPruner.svg?color=green&style=flat-square">
     </a>
     <a href="https://TextPruner.readthedocs.io/">
         <img alt="Documentation" src="https://img.shields.io/website?down_message=offline&label=Documentation&up_message=online&url=https%3A%2F%2FTextPruner.readthedocs.io">
@@ -22,7 +22,7 @@
 </p>
 
 **TextPruner** is a model pruning toolkit for pre-trained language models.
-It provides **low-cost** and **training-free** methods to reduces your model size and speed up your model inference speed by removing reduandant neurons.
+It provides **low-cost** and **training-free** methods to reduce your model size and speed up your model inference speed by removing redundant neurons.
 
 You may also be interested in,
 
@@ -53,11 +53,11 @@ You may also be interested in,
 
 The main features of TexPruner include:
 
-* **Compatibility**: TextPruner is compatible with different NLU pre-trained models. You can use it to prune your own models for vairious NLP tasks as long as they are built on the standard pre-trained models.
-* **Usability**: TextPruner can be used as an package or a CLI tool. They are both easy to use.
-* **Efficiency**: TextPruner reduces the models size in a simple and fast way. TextPruner uses structured training-free methods to prune models. It is much faster than distillation and other pruning methods than involve training. 
+* **Compatibility**: TextPruner is compatible with different NLU pre-trained models. You can use it to prune your own models for various NLP tasks as long as they are built on the standard pre-trained models.
+* **Usability**: TextPruner can be used as a package or a CLI tool. They are both easy to use.
+* **Efficiency**: TextPruner reduces the model size in a simple and fast way. TextPruner uses structured training-free methods to prune models. It is much faster than distillation and other pruning methods that involve training. 
 
-TextPruner currently supports vocabulary pruning and transformer pruning. For the explaination of the pruning modes, see [Pruning Modes](#pruning-modes).
+TextPruner currently supports vocabulary pruning and transformer pruning. For the explanation of the pruning modes, see [Pruning Modes](#pruning-modes).
 
 To use TextPruner, users can either import TextPruner into the python scripts or run the TextPruner command line tool. See the examples in [Usage](#usage).
 
@@ -71,7 +71,7 @@ TextPruner currently supports the following pre-trained models in [transformers]
 * RoBERTa
 * XLM-RoBERTa
 
-The online documentation will be comming soon.
+The online documentation will be coming soon.
 
 ## Installation
 
@@ -98,24 +98,24 @@ The online documentation will be comming soon.
 
 ### Pruning Modes
 
-In TextPruner, there are three pruning modes : **vocabulary pruning**, **transformer pruning** and **pipeline pruning**.
+In TextPruner, there are three pruning modes: **vocabulary pruning**, **transformer pruning** and **pipeline pruning**.
 
 
 ![](pics/PruningModes.png)
 
 #### Vocabulary Pruning
 
-The pre-trained models usually have large vocabulary, but some tokens are rarely appeared in the datasets of the downstream tasks. These tokens can be removed to reduce model size and accelerate MLM pre-training.
+The pre-trained models usually have a large vocabulary, but some tokens rarely appear in the datasets of the downstream tasks. These tokens can be removed to reduce the model size and accelerate MLM pre-training.
 
 #### Transformer Pruning
 
 
-Another approach is pruning the transformer blocks. Some studies have shown that not all attention heads are equally important in the transformers. TextPruner reduces the model size and keep the model performance as high as possible by locating and removing the unimportant attention heads and the feed-forward networks neurons.
+Another approach is pruning the transformer blocks. Some studies have shown that not all attention heads are equally important in the transformers. TextPruner reduces the model size and keeps the model performance as high as possible by locating and removing the unimportant attention heads and the feed-forward networks' neurons.
 
 #### Pipeline Pruning
 
 
-In the pipeline pruning, TextPruner performs transformer pruning and vocabulary pruning successively to fully reduce the model size.
+In pipeline pruning, TextPruner performs transformer pruning and vocabulary pruning successively to fully reduce the model size.
 
 
 ## Usage
@@ -130,7 +130,7 @@ The **pruners** perform the pruning process. The **configurations** set their be
   * `textpruner.VocabularyPruningConfig`
   * `textpruner.TransformerPruningConfig`
 
-We demostrate the basic usage below. See the docstrings of pruners and configurations for the detailed explanation of each argument.
+We demonstrate the basic usage below. See the docstrings of pruners and configurations for a detailed explanation of each argument.
 
 ### Vocabulary Pruning
 
@@ -148,7 +148,7 @@ pruner = VocabularyPruner(model, tokenizer)
 pruner.prune(dataiter=texts)
 ```
 
-*  `model` is the pre-trained model for the MLM task or for other NLP tasks.
+*  `model` is the pre-trained model for the MLM task or other NLP tasks.
 * `tokenizer` is the corresponding tokenizer.
 * `texts` is a list of strings. The tokens that do not appear in the texts are removed from the model and the tokenizer.
 
@@ -177,8 +177,8 @@ textpruner-cli  \
 ### Transformer Pruning
 
 * To perform transformer pruning on a dataset, a `dataloader` of the dataset should be provided. The `dataloader` should return both the inputs and the labels. 
-* TextPruner needs the loss return by the model to calcuate neuron importance scores. TextPruner will try to guess which element in the model output is the loss. If none of the following is true:
-  * the model return a single element, which is the loss;
+* TextPruner needs the loss return by the model to calculate neuron importance scores. TextPruner will try to guess which element in the model output is the loss. If none of the following is true:
+  * the model returns  a single element, which is the loss;
   * the model output is a list or a tuple. Loss is its first element;
   * the loss of can be accessed by `output['loss'] ` or `output.loss` where `output` is the model output
 
@@ -200,7 +200,7 @@ pruner.prune(dataloader=dataloader, save_model=True)
 ```
 
 *  `transformer_pruning_config` set the mean target size per layer (`target_ffn_size` and `target_num_of_heads`) and the number of iterations (`n_iters`) of pruning.
-* `dataloader` is a PyTorch dataloader they provides inputs and labels of the dataset.
+* `dataloader` is a PyTorch dataloader that provides inputs and labels of the dataset.
 
 `TransformerPruner` accepts `GeneralConfig` and `TransformerPruningConfig` for fine control. See [Configurations](#configurations) and the docstring of `TransformerPruner` for details.
 
@@ -226,7 +226,7 @@ textpruner-cli  \
 
 ### Pipeline Pruning
 
-Pipeline pruning combine transformer pruning and vocabulary pruning into a single call.
+Pipeline pruning combines transformer pruning and vocabulary pruning into a single call.
 
 See the examples at [examples/pipeline_pruning](examples/pipeline_pruning).
 
@@ -282,7 +282,7 @@ They are used in different pruning modes:
   TransformerPruner(transformer_pruning_config= ..., vocabulary_pruning_config= ..., general_config = ...)
   ```
 
-The configurations are dataclass objects (used in the python scripts) or json files (used in the command line).
+The configurations are dataclass objects (used in the python scripts) or JSON files (used in the command line).
 If no configurations are provided, TextPruner will use the default configurations.
 See the docstrings of `GeneralConfig`, `VocabularyPruningConfig` and `TransformerPruningConfig` for details.
 
@@ -320,7 +320,7 @@ transformer_pruning_config = TransformerPruningConfig(
 )
 ```
 
-As json files:
+As JSON files:
 
 * `GeneralConfig` : [gc.json](examples/configurations/gc.json)
 * `VocabularyPruningConfig` : [vc.json](examples/configurations/vc.json)
@@ -385,7 +385,7 @@ Standard deviation: 2.39ms
 We prune a [XLM-RoBERTa-base](https://github.com/facebookresearch/XLM) classification model trained on the Multilingual Natural Language Inference (NLI) task [PAWS-X](https://github.com/google-research-datasets/paws/tree/master/pawsx). The model is fine-tuned and evaluated on the Egnlish dataset.
 
 ### Vocabulary Pruning
-We use a [100k-lines subset](examples/datasets/xnli/en.tsv) of [XNLI](https://github.com/facebookresearch/XNLI) English training set as the vocabulary file. The pruning results is listed below.
+We use a [100k-lines subset](examples/datasets/xnli/en.tsv) of [XNLI](https://github.com/facebookresearch/XNLI) English training set as the vocabulary file. The pruning result is listed below.
 
 | Model                | Total size (MB) | Vocab size | Acc on en (%)|
 | :-------------------- | :---------------: | :----------: | :------------: |
@@ -394,12 +394,12 @@ We use a [100k-lines subset](examples/datasets/xnli/en.tsv) of [XNLI](https://gi
 
 ### Transfomer Pruning
 
-We denote the model structure as `(H,F)` where `H` is the average number of attention heads per layer, `F` is the average FFN hidden size per layer. With this notation, `(12,3072)` stands for the original XLM-RoBERTa model. In addition we consider (8, 2048) and (6, 1536).
+We denote the model structure as `(H, F)` where `H` is the average number of attention heads per layer, `F` is the average FFN hidden size per layer. With this notation, `(12,3072)` stands for the original XLM-RoBERTa model. In addition we consider (8, 2048) and (6, 1536).
 
 #### Inference time 
 
 The speed is measured on inputs of length 512 and batch size 32. 
-Each layer of the model has the same number of attention heads and FFN hiden size.
+Each layer of the model has the same number of attention heads and FFN hidden size.
 
 | Model      | Total size (MB) | Encoder size (MB) | Inference time (ms) | Speed up |
 | :---------- | :---------------: | :-----------------: | :-------------------: | :--------: |
@@ -410,7 +410,7 @@ Each layer of the model has the same number of attention heads and FFN hiden siz
 
 #### Performance
 
-We prune the model with diffrent number of iterations (`n_iters`). The accuracies are listed below:
+We prune the model with different numbers of iterations (`n_iters`). The accuracies are listed below:
 
 | Model      | n_iters=1           |           n_iters=2 |           n_iters=4 |           n_iters=8 |           n_iters=16 |
 | :------------ | :-----------: | :-----------: | :-----------: | :-----------: | :------------: |
@@ -420,7 +420,7 @@ We prune the model with diffrent number of iterations (`n_iters`). The accuracie
 | (6, 1536)    | 85.15       | 89.10       | 90.90       | 90.60       | 90.85        |
 | (6, 1536) with uneven heads   | 45.35       | 86.45       |  90.55     | 90.90         | **91.95**    |
 
-`uneven heads` means the number of attention heads may various from layer to layer.
+`uneven heads` means the number of attention heads may vary from layer to layer.
 With the same model structure, the performance increases as we increase the number of iterations `n_iters`. 
 
 ## FAQ
@@ -431,17 +431,17 @@ A: No.
 
 **Q: Can you compare the knowledge distillation and model pruning? Which one should I use ?**
 
-A: Both model pruning and knowledge distillation are popular approaches for reducing model size and accelerating model speed. 
+A: Both model pruning and knowledge distillation are popular approaches for reducing the model size and accelerating model speed. 
 
-* Knowledge distillation usually achieves better performance and a higher compression ratio, but the distillation process is computational expensive and time costing. It requires accessing to a large amount of data for training.
+* Knowledge distillation usually achieves better performance and a higher compression ratio, but the distillation process is computationally expensive and time-costing. It requires accessing a large amount of data for training.
 
 * The structured training-free pruning usually leads to a lower performance than knowledge distillation, but the method is fast and light. The pruning process can be finished within minutes, and only requires a small amount of data for guiding the pruning process.
 
-(There are some pruning methods involves training can also achieve a high compression ratio)
+(There are some pruning methods that involves training can also achieve a high compression ratio)
 
-If you are interested in applying knowledge distillation , please refer to our [TextBrewer](http://textbrewer.hfl-rc.com).
+If you are interested in applying knowledge distillation, please refer to our [TextBrewer](http://textbrewer.hfl-rc.com).
 
-if you want achieve the best performance, you may consider applying both the distillation and pruning.
+if you want to achieve the best performance, you may consider applying both distillation and pruning.
 
 
 ## Follow Us
