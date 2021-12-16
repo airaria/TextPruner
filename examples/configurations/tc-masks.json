@@ -1,0 +1,4 @@
+{
+  "pruning_method": "masks",
+  "config_class": "TransformerPruningConfig"
+}

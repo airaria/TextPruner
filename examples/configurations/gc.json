@@ -1,0 +1,5 @@
+{
+  "use_device": "auto",
+  "output_dir": "./pruned_models",
+  "config_class": "GeneralConfig"
+}

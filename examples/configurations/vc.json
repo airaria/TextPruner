@@ -1,0 +1,5 @@
+{
+  "min_count": 1,
+  "prune_lm_head": "auto",
+  "config_class": "VocabularyPruningConfig"
+}

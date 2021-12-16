@@ -1,0 +1,11 @@
+{
+  "target_ffn_size": 2048,
+  "target_num_of_heads": 8,
+  "pruning_method": "iterative",
+  "ffn_even_masking": true,
+  "head_even_masking": true,
+  "n_iters": 1,
+  "multiple_of": 1,
+  "pruning_order": null,
+  "config_class": "TransformerPruningConfig"
+}
