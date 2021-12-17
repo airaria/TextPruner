@@ -373,9 +373,10 @@ Call TransformerPruner.save_masks or TransformerPruner.save_jit_model manually i
             batch = move_to_device(batch, device)
             if isinstance(batch,abc.Mapping):
                 outputs = model(**batch)
+                batch_num_examples = len(list(batch.values())[0])
             else:
                 outputs = model(*batch)
-
+                batch_num_examples = len(batch[0])
             if adaptor is None:
                 try:
                     if isinstance(outputs, torch.Tensor):
@@ -410,7 +411,7 @@ Call TransformerPruner.save_masks or TransformerPruner.save_jit_model manually i
                 ffn_importance[layer_num] += ((weight2.grad * weight2).sum(dim=0)).abs().detach()
 
             model.zero_grad()
-            num_examples += len(batch["attention_mask"])
+            num_examples += batch_num_examples
 
         head_importance /= num_examples
         ffn_importance /= num_examples
