@@ -12,9 +12,9 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../src/textpruner'))
+sys.path.insert(0, os.path.abspath('../../src'))
 
-from version import __version__
+__version__=open("../../src/textpruner/__init__.py").readlines()[0].split()[-1].strip("\"'")
 print(__version__)
 
 # -- Project information -----------------------------------------------------
