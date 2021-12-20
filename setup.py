@@ -23,6 +23,12 @@ To create the package for pypi.
 
 import shutil
 from pathlib import Path
+import platform
+
+if platform.python_version() < "3.8":
+    numpy_require = "numpy < 1.22"
+else:
+    numpy_require = "numpy > 1.17"
 
 from setuptools import find_packages, setup
 
@@ -47,7 +53,8 @@ setup(
         "torch >= 1.7",
         "tqdm",
         "sentencepiece",
-        "protobuf"
+        "protobuf",
+        numpy_require
     ],
     entry_points = {
        'console_scripts': ['textpruner-cli=textpruner.commands.textpruner_cli:main'],
