@@ -69,7 +69,7 @@ TextPruner目前支持[Transformers](https://github.com/huggingface/transformers
 * RoBERTa
 * XLM-RoBERTa
 
-在线文档将于近期推出。
+API文档参见[在线文档](https://textpruner.readthedocs.io)
 
 ## 安装
 
@@ -127,9 +127,9 @@ TextPruner提供了3种裁剪模式，分别为**词表裁剪（Vocabulary Pruni
   * `textpruner.TransformerPruningConfig`
 
 
-下面展示它们的基本用法。Pruners和configurations的各个参数的详细含义请参见它们的文档字符串（docstring）。
-Configurations的进一步说明参见[Configurations](#configurations)。
-
+TextPruner的API文档请参见[在线文档](https://textpruner.readthedocs.io)。
+Configurations的说明参见[Configurations](#configurations)。
+下面展示基本用法。
 
 ### 词表裁剪
 
@@ -276,7 +276,7 @@ textpruner-cli  \
 
 在Python脚本中，配置对象是dataclass对象；在命令行中，配置对象是JSON文件。
 如果未向pruner提供相应的配置对象，TextPruner将使用默认配置。
-配置对象的各个参数详细意义请参见`GeneralConfig`，`VocabularyPruningConfig`和`TransformerPruningConfig` 的文档字符串。
+配置对象的各个参数详细意义请参见`GeneralConfig`，`VocabularyPruningConfig`和`TransformerPruningConfig` API文档。
 
 
 在Python脚本定义：

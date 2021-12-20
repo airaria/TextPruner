@@ -71,7 +71,8 @@ TextPruner currently supports the following pre-trained models in [transformers]
 * RoBERTa
 * XLM-RoBERTa
 
-The online documentation will be coming soon.
+See the [online documentation](https://textpruner.readthedocs.io) for the API reference.
+
 
 ## Installation
 
@@ -108,7 +109,7 @@ In TextPruner, there are three pruning modes: **vocabulary pruning**, **transfor
 The pre-trained models usually have a large vocabulary, but some tokens rarely appear in the datasets of the downstream tasks. These tokens can be removed to reduce the model size and accelerate MLM pre-training.
 
 #### Transformer Pruning
-
+AP
 
 Another approach is pruning the transformer blocks. Some studies have shown that not all attention heads are equally important in the transformers. TextPruner reduces the model size and keeps the model performance as high as possible by locating and removing the unimportant attention heads and the feed-forward networks' neurons.
 
@@ -130,7 +131,9 @@ The **pruners** perform the pruning process. The **configurations** set their be
   * `textpruner.VocabularyPruningConfig`
   * `textpruner.TransformerPruningConfig`
 
-We demonstrate the basic usage below. See the docstrings of pruners and configurations for a detailed explanation of each argument.
+See the [online documentation](https://textpruner.readthedocs.io) for the API reference.
+The `Configurations` are explained in [Configurations](#configurations).
+We demonstrate the basic usage below.
 
 ### Vocabulary Pruning
 
@@ -153,7 +156,7 @@ pruner.prune(dataiter=texts)
 * `texts` is a list of strings. The tokens that do not appear in the texts are removed from the model and the tokenizer.
 
 
-`VocabularyPruner` accepts `GeneralConfig` and `VocabularyPruningConfig` for fine control. By default we could omit them. See [Configurations](#configurations) and the docstring of `VocabularyPruner` for details.
+`VocabularyPruner` accepts `GeneralConfig` and `VocabularyPruningConfig` for fine control. By default we could omit them. See the API reference for details.
 
 
 #### Use TextPruner-CLI tool
@@ -202,7 +205,7 @@ pruner.prune(dataloader=dataloader, save_model=True)
 *  `transformer_pruning_config` set the mean target size per layer (`target_ffn_size` and `target_num_of_heads`) and the number of iterations (`n_iters`) of pruning.
 * `dataloader` is a PyTorch dataloader that provides inputs and labels of the dataset.
 
-`TransformerPruner` accepts `GeneralConfig` and `TransformerPruningConfig` for fine control. See [Configurations](#configurations) and the docstring of `TransformerPruner` for details.
+`TransformerPruner` accepts `GeneralConfig` and `TransformerPruningConfig` for fine control. See the API reference for details.
 
 
 #### Use TextPruner-CLI tool
@@ -241,7 +244,7 @@ pruner = PipelinePruner(model, tokenizer, transformer_pruning_config=transformer
 pruner.prune(dataloader=dataloader, dataiter=texts, save_model=True)
 ```
 
-`PipelinePruner` accepts `GeneralConfig`, `VocabularyPruningConfig` and `TransformerPruningConfig` for fine control. See [Configurations](#configurations) and the docstring of `PipelinePruner` for details.
+`PipelinePruner` accepts `GeneralConfig`, `VocabularyPruningConfig` and `TransformerPruningConfig` for fine control. See the API reference for details.
 
 #### Use TextPruner-CLI tool
 
@@ -284,12 +287,8 @@ They are used in different pruning modes:
 
 The configurations are dataclass objects (used in the python scripts) or JSON files (used in the command line).
 If no configurations are provided, TextPruner will use the default configurations.
-See the docstrings of `GeneralConfig`, `VocabularyPruningConfig` and `TransformerPruningConfig` for details.
+See the API reference for details.
 
-
-<details>
-
-<summary> Click here to see examples </summary>
 
 In the python script:
 
@@ -328,7 +327,6 @@ As JSON files:
     * Pruning with the given masks : [tc-masks.json](examples/configurations/tc-masks.json)
     * Pruning on labeled dataset iteratively : [tc-iterative.json](examples/configurations/tc-iterative.json)
 
-</details>
 
 ### Helper functions
 
