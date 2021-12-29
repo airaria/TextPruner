@@ -257,3 +257,17 @@ output_modes = {
     "xnli": "classification",
     "pawsx":"classification",
 }
+
+
+taskname = 'xnli'
+data_dir = '../datasets/xnli'
+split = 'dev'
+max_seq_length=128
+eval_langs = ['en']
+batch_size=32
+tokenizer = XLMRobertaTokenizer.from_pretrained('../models/xlmr_xnli')
+eval_dataset = MultilingualNLIDataset(
+    task=taskname, data_dir=data_dir, split=split, prefix='xlmr',
+    max_seq_length=max_seq_length, langs=eval_langs, local_rank=-1, tokenizer=tokenizer)
+eval_sampler = SequentialSampler(eval_dataset)
+dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=batch_size)

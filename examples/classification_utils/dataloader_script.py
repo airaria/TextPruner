@@ -97,20 +97,21 @@ class DataProcessor(object):
 class XnliProcessor(DataProcessor):
 
     def get_dev_examples(self, lang, data_dir):
+        """See base class."""
+        lines = self._read_tsv(os.path.join(data_dir, "xnli.dev.tsv"))
         examples = []
-        input_file = os.path.join(data_dir,'xnli.dev.jsonl')
-        with open(input_file,'r',encoding='utf-8-sig') as f:
-           for index,line in enumerate(f):
-               raw_example = json.loads(line)
-               if raw_example['language'] != lang:
-                   continue
-               else:
-                   text_a = raw_example['sentence1']
-                   text_b = raw_example['sentence2']
-                   label  = raw_example['gold_label']
-                   guid   = f"dev-{index}"
-                   examples.append(
-                       InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
+        for (i, line) in enumerate(lines):
+            if i == 0:
+                continue
+            language = line[0]
+            if language != lang:
+                continue
+            guid = "%s-%s" % ("dev", i)
+            text_a = line[6]
+            text_b = line[7]
+            label = line[1]
+            assert isinstance(text_a, str) and isinstance(text_b, str) and isinstance(label, str)
+            examples.append(InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
 
     def get_labels(self):
