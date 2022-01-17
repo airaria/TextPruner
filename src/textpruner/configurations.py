@@ -94,6 +94,7 @@ class TransformerPruningConfig(Config):
         n_iters :  if ``pruning_method`` is set to ``'iterative'``, ``n_iters`` is number of pruning iterations to prune the model progressively.
         multiple_of : if ``ffn_even_masking`` is ``False``, restrict the target FFN size of each layer to be a multiple of ``multiple_if``.
         pruning_order: ``None`` or ``'head-first'`` or ``'ffn-first'``. ``None``: prune the attention heads and ffn layer simultaneously; if set to ``'head-first'`` or ``'ffn-first'``, the actual number of iterations is ``2*n_iters``.
+        use_logits : if ``True``, performs self-supervised pruning, where the logits are treated as the soft labels.
         config_class: Type of the configurations. Users should not change its value.
 
     Warning:
@@ -113,6 +114,7 @@ class TransformerPruningConfig(Config):
     n_iters : Optional[int] = 1
     multiple_of : int = 1
     pruning_order : Optional[str] = None
+    use_logits : bool = False
     config_class: str = "TransformerPruningConfig"
     def __post_init__(self):
         assert self.pruning_method in ('masks','iterative'), "Unrecgonized pruning method"

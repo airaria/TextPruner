@@ -1,4 +1,4 @@
- [**English**](README_EN.md) | [**中文说明**](README.md)
+ [**English**](README.md) | [**中文说明**](README_ZH.md)
 
 <p align="center">
     <br>
@@ -21,59 +21,62 @@
     </a>
 </p>
 
-**TextPruner**是一个为预训练语言模型设计的模型裁剪工具包，通过轻量、快速的裁剪方法对模型进行结构化剪枝，从而实现压缩模型体积、提升模型速度。
+**TextPruner** is a model pruning toolkit for pre-trained language models.
+It provides **low-cost** and **training-free** methods to reduce your model size and speed up your model inference speed by removing redundant neurons.
 
-其他相关资源：
+You may also be interested in,
 
-- 知识蒸馏工具TextBrewer：https://github.com/airaria/TextBrewer
-- 中文MacBERT预训练模型：https://github.com/ymcui/MacBERT
-- 中文ELECTRA预训练模型：https://github.com/ymcui/Chinese-ELECTRA
-- 中文XLNet预训练模型：https://github.com/ymcui/Chinese-XLNet
-- 少数民族语言预训练模型CINO：https://github.com/ymcui/Chinese-Minority-PLM
+- Knowledge Distillation Toolkit - TextBrewer: https://github.com/airaria/TextBrewer
+- Chinese MacBERT: https://github.com/ymcui/MacBERT
+- Chinese ELECTRA: https://github.com/ymcui/Chinese-ELECTRA
+- Chinese XLNet: https://github.com/ymcui/Chinese-XLNet
+- CINO: https://github.com/ymcui/Chinese-Minority-PLM
 
 
-## 目录
+## Table of Contents
 
 <!-- TOC -->
 
-| 章节 | 内容 |
+| Section | Contents |
 |-|-|
-| [简介](#简介) | TextPruner介绍 |
-| [安装](#安装) | 安装要求与方法 |
-| [裁剪模式](#裁剪模式) | 三种裁剪模式说明 |
-| [使用方法](#使用方法) | TextPruner快速上手 |
-| [实验结果](#实验结果) | 典型任务上的裁剪效果 |
-| [常见问题](#常见问题) | 常见问题 |
-| [关注我们](#关注我们) | - |
+| [Introduction](#introduction) | Introduction to TextPruner |
+| [Installation](#installation) | Requirements and how to install |
+| [Pruning Modes](#pruning-modes) | A brief introduction to the three pruning modes |
+| [Usage](#usage) | A quick guide on how to use TextPruner |
+| [Experiments](#experiments) | Pruning experiments on typical tasks |
+| [FAQ](#faq) | Frequently asked questions |
+| [Follow Us](#follow-us) | - |
 
-## 简介
+## Introduction
 
-**TextPruner**是一个为预训练语言模型设计，基于PyTorch实现的模型裁剪工具包。它提供了针对预训练模型的结构化裁剪功能，通过识别并移除模型结构中不重要的结构与神经元，达到压缩模型大小、提升模型推理速度的目的。
+**TextPruner** is a toolkit for pruning pre-trained transformer-based language models written in PyTorch. It offers structured training-free pruning methods and a user-friendly interface.
 
-TextPruner的主要特点包括：
+The main features of TexPruner include:
 
-* **功能通用**: TextPruner适配多种预训练模型，并适用于多种NLU任务。除了标准预训练模型外，用户也可使用TextPruner裁剪基于标准预训练模型开发的自定义模型
-* **灵活便捷**: TextPruner即可作为Python包在Python脚本中使用，也提供了单独命令行工具。
-* **运行高效**: TextPruner使用无训练的结构化裁剪方法，运行迅速，快于知识蒸馏等基于训练的方法。
+* **Compatibility**: TextPruner is compatible with different NLU pre-trained models. You can use it to prune your own models for various NLP tasks as long as they are built on the standard pre-trained models.
+* **Usability**: TextPruner can be used as a package or a CLI tool. They are both easy to use.
+* **Efficiency**: TextPruner reduces the model size in a simple and fast way. TextPruner uses structured training-free methods to prune models. It is much faster than distillation and other pruning methods that involve training. 
 
-TextPruner目前支持词表裁剪和transformer裁剪，参见[裁剪模式](#裁剪模式)。
+TextPruner currently supports vocabulary pruning and transformer pruning. For the explanation of the pruning modes, see [Pruning Modes](#pruning-modes).
 
-要使用TextPruner，用户可以在python脚本中导入TextPruner或直接在命令行运行TextPruner命令行工具，参见[使用方法](#使用方法)。
+To use TextPruner, users can either import TextPruner into the python scripts or run the TextPruner command line tool. See the examples in [Usage](#usage).
 
-TextPruner在典型任务上的实验效果，参见[实验结果](#实验)。
+For the performance of the pruned model on typical tasks, see [Experiments](#experiments).
 
-TextPruner目前支持[Transformers](https://github.com/huggingface/transformers)库中的如下预训练模型:
+
+TextPruner currently supports the following pre-trained models in [transformers](https://github.com/huggingface/transformers):
 * BERT
 * Albert
 * Electra
 * RoBERTa
 * XLM-RoBERTa
 
-API文档参见[在线文档](https://textpruner.readthedocs.io)
+See the [online documentation](https://textpruner.readthedocs.io) for the API reference.
 
-## 安装
 
-* 安装要求
+## Installation
+
+* Requirements
 
     * Python >= 3.7
     * torch >= 1.7
@@ -81,42 +84,44 @@ API文档参见[在线文档](https://textpruner.readthedocs.io)
     * sentencepiece
     * protobuf
 
-* 使用pip安装
+* Install with pip
 
     ```bash
     pip install textpruner
     ```
 
-*  从源代码安装
+*  Install from the source
 
     ```bash
     git clone https://github.com/airaria/TextPruner.git
     pip install ./textpruner
     ```
 
-### 裁剪模式
+### Pruning Modes
 
-TextPruner提供了3种裁剪模式，分别为**词表裁剪（Vocabulary Pruning）**，**Transformer裁剪（Transformer Pruning）**和**流水线裁剪（Pipeline Pruning）**。
+In TextPruner, there are three pruning modes: **vocabulary pruning**, **transformer pruning** and **pipeline pruning**.
 
 
 ![](pics/PruningModes.png)
 
-#### 词表裁剪
+#### Vocabulary Pruning
 
-预训练模型通常包含对具体任务来说冗余的词表。通过移除词表中未在具体任务未出现的token，可以实现减小模型体积，提升MLM等任务训练速度的效果。
+The pre-trained models usually have a large vocabulary, but some tokens rarely appear in the datasets of the downstream tasks. These tokens can be removed to reduce the model size and accelerate MLM pre-training.
 
-#### Transformer裁剪
+#### Transformer Pruning
+AP
 
-另一种裁剪方式是裁剪每个transformer模块的大小。一些研究表明transformer中的注意力头（attention heads）并不是同等重要，移除不重要的注意力头并不会显著降低模型性能。TextPruner找到并移除每个transformer中“不重要”的注意力头和全连接层神经元，从而在减小模型体积的同时把对模型性能的影响尽可能降到最低。
+Another approach is pruning the transformer blocks. Some studies have shown that not all attention heads are equally important in the transformers. TextPruner reduces the model size and keeps the model performance as high as possible by locating and removing the unimportant attention heads and the feed-forward networks' neurons.
 
-#### 流水线裁剪
-
-在该模式中，TextPruner对给定模型依次分别进行Transformer裁剪和词表裁剪，对模型体积做全面的压缩。
+#### Pipeline Pruning
 
 
-## 使用方法
+In pipeline pruning, TextPruner performs transformer pruning and vocabulary pruning successively to fully reduce the model size.
 
-**Pruners**执行具体的裁剪过程，**configurations**设置裁剪参数。它们名称的含义是不言自明的：
+
+## Usage
+
+The **pruners** perform the pruning process. The **configurations** set their behaviors. There names are self-explained: 
 * Pruners
   * `textpruner.VocabularyPruner`
   * `textpruner.TransformerPruner`
@@ -126,20 +131,19 @@ TextPruner提供了3种裁剪模式，分别为**词表裁剪（Vocabulary Pruni
   * `textpruner.VocabularyPruningConfig`
   * `textpruner.TransformerPruningConfig`
 
+See the [online documentation](https://textpruner.readthedocs.io) for the API reference.
+The `Configurations` are explained in [Configurations](#configurations).
+We demonstrate the basic usage below.
 
-TextPruner的API文档请参见[在线文档](https://textpruner.readthedocs.io)。
-Configurations的说明参见[Configurations](#configurations)。
-下面展示基本用法。
+### Vocabulary Pruning
 
-### 词表裁剪
+To perform vocabulary pruning, users should provide a text file or a list of strings. The tokens that do not appear in the texts are removed from the model and the tokenizer.
 
-要进行词表裁剪，用户应提供一个文本文件或字符串列表（list of strings）。TextPruner将从model和tokenizer中移除未在文本文件或列表中出现过的token。
+See the examples at [examples/vocabulary_pruning](examples/vocabulary_pruning).
 
-具体的例子参见[examples/vocabulary_pruning](examples/vocabulary_pruning)
+#### Use TextPruner as a package
 
-#### 在脚本中使用
-
-词表裁剪仅需3行代码：
+Pruning the vocabulary in 3 lines of code:
 
 ```python
 from textpruner import VocabularyPruner
@@ -147,12 +151,15 @@ pruner = VocabularyPruner(model, tokenizer)
 pruner.prune(dataiter=texts)
 ```
 
-* `model`和`tokenizer`是要裁剪的模型和对应的分词器
-* `texts`是字符串列表（list of strings），一般为任务相关数据的文本，用以确定裁剪后的词表大小。TextPruner将从model和tokenizer中移除未在其中出现过的token。
+*  `model` is the pre-trained model for the MLM task or other NLP tasks.
+* `tokenizer` is the corresponding tokenizer.
+* `texts` is a list of strings. The tokens that do not appear in the texts are removed from the model and the tokenizer.
 
 
+`VocabularyPruner` accepts `GeneralConfig` and `VocabularyPruningConfig` for fine control. By default we could omit them. See the API reference for details.
 
-#### 使用命令行工具
+
+#### Use TextPruner-CLI tool
 
 ```bash
 textpruner-cli  \
@@ -163,28 +170,27 @@ textpruner-cli  \
   --model_path /path/to/model/and/config/directory \
   --vocabulary /path/to/a/text/file
 ```
-* `configurations`：JSON格式的配置文件。
-* `model_class` : 模型的完整类名，要求该类在当前目录下可访问。例如`model_class`是`modeling.ModelClassName`，那么当前目录下应存在`modeling.py`。如果`model_class` 中无模块名，那么TextPruner会试图从transformers库中导入`model_class`，如上面的例子。
-* `tokenizer_class` : tokenizer的完整类名。要求该类在当前目录下可访问。如果`tokenizer_class` 中无模块名，那么TextPruner会试图从transformers库中导入`tokenizer_class`。
-* `model_path`：模型、tokenizer和相关配置文件存放目录。
-* `vocabulary` : 用于定义新词表的文本文件。TextPruner将从model和tokenizer中移除未在其中出现过的token。
+* `configurations` : configuration files in the JSON format. See [Configurations](#configurations) for details.
+* `model_class` : The classname of the model. It must be accessible from the current directory. For example, if `model_class` is `modeling.ModelClassName`, there should be a `modeling.py` in the current directory. If there is no module name in `model_class`, TextPruner will try to import the `model_class` from the transformers library, as shown above.
+* `tokenizer_class` : The classname of the tokenizer. It must be accessible from the current directory. If there is no module name in `tokenizer_class`, TextPruner will try to import the `tokenizer_class` from the transformers library.
+* `model_path` : The directory that contains weight and the configurations for the model and the tokenizer.
+* `vocabulary` : A text file that is used for generating new vocabulary. The tokens that do not appear in the vocabulary are removed from the model and the tokenizer.
 
 
-### Transformer裁剪
+### Transformer Pruning
 
-* 要在一个数据集上进行transformer裁剪，需要一个`dataloader`对象。每次迭代`dataloader`应返回一个batch，batch的格式应与训练模型时相同：包括inputs和labels（batch内容本身不必用和训练时相同）。
-* TextPruner需要模型返回的loss用以计算神经元的重要性指标。TextPruner会尝试猜测模型输出中的哪个元素是loss。**如以下皆不成立**：
-  * 模型只返回一个元素，那个元素就是loss
-  * 模型返回一个list或tuple。loss是其中第一个元素
-  * loss可以通过`output['loss']`或`output.loss`得到，其中`output`是模型的输出
-  
-  那么用户应提供一个`adaptor`函数（以模型的输出为输入，返回loss）给`TransformerPruner`。
+* To perform transformer pruning on a dataset, a `dataloader` of the dataset should be provided. The `dataloader` should return both the inputs and the labels. 
+* TextPruner needs the loss return by the model to calculate neuron importance scores. TextPruner will try to guess which element in the model output is the loss. If none of the following is true:
+  * the model returns  a single element, which is the loss;
+  * the model output is a list or a tuple. Loss is its first element;
+  * the loss of can be accessed by `output['loss'] ` or `output.loss` where `output` is the model output
 
-具体的例子参见[examples/transformer_pruning](examples/transformer_pruning)
+  users should provide an `adaptor` function (which takes the output of the model and return the loss) to the `TransformerPruner`.
 
-#### 在脚本中使用
+See the examples at [examples/transformer_pruning](examples/transformer_pruning).
 
-裁剪一个12层预训练模型，每层的注意力头目标数为8，全连接层的目标维数为2048，通过4次迭代裁剪到目标大小：
+#### Use TextPruner as a package
+
 ```python
 from textpruner import TransformerPruner, TransformerPruningConfig
 transformer_pruning_config = TransformerPruningConfig(
@@ -196,10 +202,13 @@ pruner = TransformerPruner(model,transformer_pruning_config=transformer_pruning_
 pruner.prune(dataloader=dataloader, save_model=True)
 ```
 
-* transformer_pruning_config设置了具体的裁剪参数。
-* `dataloader`用于向pruner提供数据用于计算各个注意力头的神经元的重要性，从而决定裁剪顺序。
+*  `transformer_pruning_config` set the mean target size per layer (`target_ffn_size` and `target_num_of_heads`) and the number of iterations (`n_iters`) of pruning.
+* `dataloader` is a PyTorch dataloader that provides inputs and labels of the dataset.
 
-#### 使用命令行工具
+`TransformerPruner` accepts `GeneralConfig` and `TransformerPruningConfig` for fine control. See the API reference for details.
+
+
+#### Use TextPruner-CLI tool
 
 ```bash
 textpruner-cli  \
@@ -210,21 +219,21 @@ textpruner-cli  \
   --model_path ../models/xlmr_pawsx \
   --dataloader_and_adaptor dataloader_script
 ```
-* `configurations`：JSON格式的配置文件。
-* `model_class` : 模型的完整类名，要求该类在当前目录下可访问。例如`model_class`是`modeling.ModelClassName`，那么当前目录下应存在`modeling.py`。如果`model_class` 中无模块名，那么TextPruner会试图从transformers库中导入`model_class`，如上面的例子。
-* `tokenizer_class` : tokenizer的完整类名。要求该类在当前目录下可访问。如果`tokenizer_class` 中无模块名，那么TextPruner会试图从transformers库中导入`tokenizer_class`。
-* `model_path`：模型、tokenizer和相关配置文件存放目录。
-* `dataloader_and_adaptor` : Python脚本文件，其中定义并初始化了dataloader和adaptor（adaptor可选）。
+* `configurations` : configuration files in the JSON format. See [Configurations](#configurations) for details.
+* `model_class` : The classname of the model. It must be accessible from the current directory. For example, if `model_class` is `modeling.ModelClassName`, there should be a `modeling.py` in the current directory. If there is no module name in `model_class`, TextPruner will try to import the `model_class` from the transformers library, as shown above.
+* `tokenizer_class` : The classname of the tokenizer. It must be accessible from the current directory. If there is no module name in `tokenizer_class`, TextPruner will try to import the `tokenizer_class` from the transformers library.
+* `model_path` : The directory contains weight and the configurations for the model and the tokenizer.
+* `dataloader_and_adaptor` : The python script that contains the dataloader and the adaptor (the adaptor is optional).
 
 
 
-### 流水线裁剪
+### Pipeline Pruning
 
-流水线裁剪结合了transformer裁剪和词表裁剪。
+Pipeline pruning combines transformer pruning and vocabulary pruning into a single call.
 
-具体的例子参见[examples/pipeline_pruning](examples/pipeline_pruning)
+See the examples at [examples/pipeline_pruning](examples/pipeline_pruning).
 
-#### 在脚本中使用
+#### Use TextPruner as a package
 
 ```python
 from textpruner import PipelinePruner, TransformerPruningConfig
@@ -235,7 +244,9 @@ pruner = PipelinePruner(model, tokenizer, transformer_pruning_config=transformer
 pruner.prune(dataloader=dataloader, dataiter=texts, save_model=True)
 ```
 
-#### 使用命令行工具
+`PipelinePruner` accepts `GeneralConfig`, `VocabularyPruningConfig` and `TransformerPruningConfig` for fine control. See the API reference for details.
+
+#### Use TextPruner-CLI tool
 
 ```bash
 textpruner-cli  \
@@ -250,36 +261,36 @@ textpruner-cli  \
 
 ### Configurations
 
-裁剪过程受配置对象（configuration objects）控制：
+The pruning process is configured by the configuration objects:
 
-* `GeneralConfig`：设置使用的device和输出目录。
-* `VocabularyPruningConfig`：设置裁剪的阈值（token的词频低于此阈值将被裁减），以及是否裁剪`lm_head`。
-* `TransformerPruningConfig`：Transformer裁剪过程参数的各种配置。
+* `GeneralConfig` : sets the device and the output directory.
+* `VocabularyPruningConfig` : sets the token pruning threshold and whether pruning the `lm_head`.
+* `TransformerPruningConfig` : sets various options on how to perform the transformer pruning process.
 
-它们用于不同的裁剪模式：
+They are used in different pruning modes:
 
-* 词表裁剪可接受`GeneralConfig` and `VocabularyPruningConfig`
+* Vocabulary pruning accepts `GeneralConfig` and `VocabularyPruningConfig`
 
   ```python
   VocabularyPruner(vocabulary_pruning_config= ..., general_config = ...)
   ```
 
-* Transformer裁剪可接受`GeneralConfig` and `TransformerPruningConfig`
+* Transformer pruning accepts `GeneralConfig` and `TransformerPruningConfig`
   ```python
   TransformerPruner(transformer_pruning_config= ..., general_config = ...)
   ```
 
-* 流水线裁剪可接受全部3种Config：
+* Pipeline pruning accepts all the configurations
   ```python
   TransformerPruner(transformer_pruning_config= ..., vocabulary_pruning_config= ..., general_config = ...)
   ```
 
-在Python脚本中，配置对象是dataclass对象；在命令行中，配置对象是JSON文件。
-如果未向pruner提供相应的配置对象，TextPruner将使用默认配置。
-配置对象的各个参数详细意义请参见`GeneralConfig`，`VocabularyPruningConfig`和`TransformerPruningConfig` API文档。
+The configurations are dataclass objects (used in the python scripts) or JSON files (used in the command line).
+If no configurations are provided, TextPruner will use the default configurations.
+See the API reference for details.
 
 
-在Python脚本定义：
+In the python script:
 
 ```python
 from textpruner import GeneralConfig, VocabularyPruningConfig, TransformerPruningConfig
@@ -308,20 +319,21 @@ transformer_pruning_config = TransformerPruningConfig(
 )
 ```
 
-作为JSON文件：
+As JSON files:
 
-* `GeneralConfig`：[gc.json](examples/configurations/gc.json)
-* `VocabularyPruningConfig`：[vc.json](examples/configurations/vc.json)
-* `TransformerPruningConfig`：
-    * 使用给定的masks进行裁剪：[tc-masks.json](examples/configurations/tc-masks.json)
-    * 在给定数据集上迭代裁剪：[tc-iterative.json](examples/configurations/tc-iterative.json)
+* `GeneralConfig` : [gc.json](examples/configurations/gc.json)
+* `VocabularyPruningConfig` : [vc.json](examples/configurations/vc.json)
+* `TransformerPruningConfig` :
+    * Pruning with the given masks : [tc-masks.json](examples/configurations/tc-masks.json)
+    * Pruning on labeled dataset iteratively : [tc-iterative.json](examples/configurations/tc-iterative.json)
 
-### 辅助函数
 
-* `textpruner.summary`：显示模型参数摘要。
-* `textpruner.inference_time`：测量与显示模型的推理耗时。
+### Helper functions
 
-例子：
+* `textpruner.summary` : show the summary of model parameters.
+* `textpruner.inference_time` : measure and print the inference time of the model.
+
+Example:
 
 ```python
 from transformers import BertForMaskedLM
@@ -365,28 +377,27 @@ Standard deviation: 2.39ms
 ```
 
 
-## 实验结果
+## Experiments
 
-使用基于[XLM-RoBERTa-base](https://github.com/facebookresearch/XLM)的分类模型，我们在多语言NLI任务[PAWS-X](https://github.com/google-research-datasets/paws/tree/master/pawsx)的英文数据集上训练与测试，并使用TextPruner对训练好的模型进行裁剪。
 
-### 词表裁剪
+We prune a [XLM-RoBERTa-base](https://github.com/facebookresearch/XLM) classification model trained on the Multilingual Natural Language Inference (NLI) task [PAWS-X](https://github.com/google-research-datasets/paws/tree/master/pawsx). The model is fine-tuned and evaluated on the Egnlish dataset.
 
-我们从[XNLI英文训练集](https://github.com/facebookresearch/XNLI)中采样[10万条样本](examples/datasets/xnli/en.tsv)作为词表，将XLM-RoBERTa模型的词表大小裁剪至这10万条样本的范围内，裁剪前后模型对比如下所示。
+### Vocabulary Pruning
+We use a [100k-lines subset](examples/datasets/xnli/en.tsv) of [XNLI](https://github.com/facebookresearch/XNLI) English training set as the vocabulary file. The pruning result is listed below.
 
 | Model                | Total size (MB) | Vocab size | Acc on en (%)|
 | :-------------------- | :---------------: | :----------: | :------------: |
 | XLM-RoBERTa-base     | 1060 (100%)     | 250002     | 94.65        |
 | + Vocabulary Pruning | 398 (37.5%)     | 23936      | 94.20        |
 
-XLM-RoBERTa作为多语言模型，词表占了模型的很大一部分。通过只保留相关任务和语言的词表，可以显著减小模型体积,并且对模型准确率只有微弱影响。
+### Transfomer Pruning
 
-### Transfomer裁剪
+We denote the model structure as `(H, F)` where `H` is the average number of attention heads per layer, `F` is the average FFN hidden size per layer. With this notation, `(12,3072)` stands for the original XLM-RoBERTa model. In addition we consider (8, 2048) and (6, 1536).
 
-使用（H,F）指示模型结构，其中H是平均每层注意力头数量，F是全连接层的维数（intermediate hidden size）。原始的XLM-RoBERTa-base模型可记为（12, 3072）。我们考虑裁剪到另外两种结构（8,2048）和（6，1536）。
+#### Inference time 
 
-#### 推理时间
-
-使用长度512，batch size 32的数据作为输入测量推理时间：
+The speed is measured on inputs of length 512 and batch size 32. 
+Each layer of the model has the same number of attention heads and FFN hidden size.
 
 | Model      | Total size (MB) | Encoder size (MB) | Inference time (ms) | Speed up |
 | :---------- | :---------------: | :-----------------: | :-------------------: | :--------: |
@@ -395,9 +406,9 @@ XLM-RoBERTa作为多语言模型，词表占了模型的很大一部分。通过
 | (6, 1536)  | 899             | 162               | 504                 | 2.0x     |
 
 
-#### 任务性能
+#### Performance
 
-我们尝试使用不同的迭代次数进行transformer裁剪，各个模型的准确率变化如下表所示：
+We prune the model with different numbers of iterations (`n_iters`). The accuracies are listed below:
 
 | Model      | n_iters=1           |           n_iters=2 |           n_iters=4 |           n_iters=8 |           n_iters=16 |
 | :------------ | :-----------: | :-----------: | :-----------: | :-----------: | :------------: |
@@ -407,42 +418,31 @@ XLM-RoBERTa作为多语言模型，词表占了模型的很大一部分。通过
 | (6, 1536)    | 85.15       | 89.10       | 90.90       | 90.60       | 90.85        |
 | (6, 1536) with uneven heads   | 45.35       | 86.45       |  90.55     | 90.90         | **91.95**    |
 
-表中的uneven heads指允许模型在不同层有不同的注意力头数。
-可以看到，随着迭代次数的增加，裁剪后的模型的性能也随之提升。
+`uneven heads` means the number of attention heads may vary from layer to layer.
+With the same model structure, the performance increases as we increase the number of iterations `n_iters`. 
 
-### 流水线裁剪
+## FAQ
 
-最后，我们用PipelinePruner同时裁剪词表和transformer：
+**Q: Does TextPruner support Tensorflow 2 ?**
 
-| Model                                             | Total size (MB) | Speed up | Acc on en (%) |
-| :-----------------------------------------------  | :-------------: | -------- | ------------- |
-| XLM-RoBERTa-base                                  |   1060 (100%)   | 1.0x     | 94.65         |
-| + Pipeline pruning to (8, 2048) with uneven heads |    227 (22%)    | 1.5x     | 93.75         |
+A: No. 
 
-Transformer裁剪过程使用了16次迭代，词表裁剪过程使用XNLI英文训练集中采样的10万条样本作为词表。整个裁剪过程在单张T4 GPU上耗时10分钟。
+**Q: Can you compare the knowledge distillation and model pruning? Which one should I use ?**
 
-## 常见问题
+A: Both model pruning and knowledge distillation are popular approaches for reducing the model size and accelerating model speed. 
 
-**Q: TextPruner 是否支持 Tensorflow 2 ？**
+* Knowledge distillation usually achieves better performance and a higher compression ratio, but the distillation process is computationally expensive and time-costing. It requires accessing a large amount of data for training.
 
-A: 不支持。
+* The structured training-free pruning usually leads to a lower performance than knowledge distillation, but the method is fast and light. The pruning process can be finished within minutes, and only requires a small amount of data for guiding the pruning process.
 
-**Q: 对于知识蒸馏和模型裁剪，能否给一些使用建议 ？**
+(There are some pruning methods that involves training can also achieve a high compression ratio)
 
-A: 知识蒸馏与模型裁剪都是减小模型体积的主流手段：
+If you are interested in applying knowledge distillation, please refer to our [TextBrewer](http://textbrewer.hfl-rc.com).
 
-* 知识蒸馏通常可以获得更好的模型效果和更高的压缩率，但是蒸馏过程较消耗算力与时间；为了获得好的蒸馏效果，对大量数据的访问也是必不可少的。
+if you want to achieve the best performance, you may consider applying both distillation and pruning.
 
-* 在相同目标模型体积下，结构化无训练裁剪方法的性能通常低于知识蒸馏，但其优点是快速与轻量。裁剪过程最短可以在数分钟内完成，并且只需要少量标注数据进行指导。
 
-（还有一类包含训练过程的裁剪方法，它们在保证模型性能的同时也可以取得很好的压缩效果。）
-
-如果你对知识蒸馏感兴趣，可以参见我们的知识蒸馏工具包[TextBrewer](http://textbrewer.hfl-rc.com)。
-
-如果你想取得最好的模型压缩效果，或许可以尝试同时采用蒸馏与裁剪这两种手段。
-
-## 关注我们
-
-欢迎关注哈工大讯飞联合实验室官方微信公众号，了解最新的技术动态
+## Follow Us
+Follow our official WeChat account to keep updated with our latest technologies!
 
 ![](pics/hfl_qrcode.jpg)

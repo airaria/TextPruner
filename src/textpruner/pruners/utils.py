@@ -2,7 +2,8 @@ import torch
 from torch import nn
 from collections import abc
 from typing import Tuple,Optional
-
+import logging
+logger = logging.getLogger(__name__)
 
 def move_to_device(batch, device):
     r"""Puts each data field to the device"""
@@ -98,3 +99,45 @@ def generate_mask(importance : torch.Tensor, total_target_size : int, even_maski
             most_imp = torch.argmax(importance[i])
             mask[i][most_imp] = 1
     return mask
+
+
+def infer_logits(outputs,adaptor=None):
+    if adaptor is None:
+        try:
+            if isinstance(outputs, torch.Tensor):
+                logits = outputs
+                assert len(logits.size())>0
+            elif isinstance(outputs, (list,tuple)):
+                logits = outputs[0]
+                assert len(logits.size())>0
+            elif isinstance(outputs, abc.Mapping):
+                logits = outputs['logits']
+            else:
+                logits = outputs.logits
+        except (KeyError, AttributeError, AssertionError) as e:
+            logger.error("Cannot infer logits from the outputs automatically! An adaptor is needed")
+            raise e
+    else:
+        logits = adaptor(outputs)
+    return logits
+
+
+def infer_loss(outputs, adaptor=None):
+    if adaptor is None:
+        try:
+            if isinstance(outputs, torch.Tensor):
+                loss = outputs
+                assert len(loss.size())==0
+            elif isinstance(outputs, (list,tuple)):
+                loss = outputs[0]
+                assert len(loss.size())==0
+            elif isinstance(outputs, abc.Mapping):
+                loss = outputs['loss']
+            else:
+                loss = outputs.loss
+        except (KeyError, AttributeError, AssertionError) as e:
+            logger.error("Cannot infer loss from the outputs automatically! An adaptor is needed")
+            raise e
+    else:
+        loss = adaptor(outputs)
+    return loss

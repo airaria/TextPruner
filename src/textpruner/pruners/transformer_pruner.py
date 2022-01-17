@@ -2,9 +2,9 @@ import torch
 from torch import nn
 import os
 
-from torch.functional import Tensor
-
+from torch.nn.functional import softmax, log_softmax
 from .utils import move_to_device, generate_mask, infer_model_type
+from .utils import infer_logits, infer_loss
 from ..configurations import  TransformerPruningConfig, GeneralConfig
 
 from ..model_map import MODEL_MAP
@@ -12,7 +12,7 @@ import logging
 from tqdm import tqdm
 from collections import abc
 from typing import Mapping, Optional
-
+from copy import deepcopy
 logger = logging.getLogger(__name__)
 
 class TransformerPruner:
@@ -49,6 +49,12 @@ TextPruner will infer the ``base_model_prefix`` so we can leave its value as ``N
         self.ffn_mask : Optional[torch.Tensor] = None
         self.keep_shape : Optional[bool] = None
         os.makedirs(self.output_dir, exist_ok=True)
+
+        self.shoule_cache_logits = True
+        self.soft_labels = []
+        if self.transformer_pruning_config.use_logits is True:
+            self.model_rep = deepcopy(model)
+            self.model_rep.half().to(model.device)
         self.save_dir = None
 
     def prune(self, dataloader=None, adaptor=None, batch_postprocessor=None, 
@@ -137,7 +143,10 @@ TextPruner will infer the ``base_model_prefix`` so we can leave its value as ``N
             ffn_importance = torch.load(ffn_importance_fn)
         else:
             logger.info("Calculating head importance and ffn importance")
-            head_importance, ffn_importance = self.get_importance_score(dataloader, adaptor, batch_postprocessor)
+            if self.transformer_pruning_config.use_logits:
+                head_importance, ffn_importance = self.get_importance_score_with_logits(dataloader, adaptor, batch_postprocessor)
+            else:
+                head_importance, ffn_importance = self.get_importance_score(dataloader, adaptor, batch_postprocessor)
             head_importance = head_importance.cpu() # (num_layers, num_heads)
             ffn_importance = ffn_importance.cpu() # (num_layers, intermediate_size)
             # Save importance score
@@ -165,7 +174,10 @@ TextPruner will infer the ``base_model_prefix`` so we can leave its value as ``N
                 logger.info(f'Number of pruning iterations: {i+1}/{n_iters}')
                 if i > 0:
                     logger.info("Calculating head importance and ffn importance")
-                    head_importance, ffn_importance = self.get_importance_score(dataloader, adaptor, batch_postprocessor)
+                    if self.transformer_pruning_config.use_logits:
+                        head_importance, ffn_importance = self.get_importance_score_with_logits(dataloader, adaptor, batch_postprocessor)
+                    else:
+                        head_importance, ffn_importance = self.get_importance_score(dataloader, adaptor, batch_postprocessor)
                     head_importance = head_importance.cpu() # (num_layers, num_heads)
                     ffn_importance = ffn_importance.cpu() # (num_layers, intermediate_size)
 
@@ -198,7 +210,10 @@ TextPruner will infer the ``base_model_prefix`` so we can leave its value as ``N
                     current_is_head = (i%2==1)
                 if i > 0:
                     logger.info("Calculating head importance and ffn importance")
-                    head_importance, ffn_importance = self.get_importance_score(dataloader, adaptor, batch_postprocessor)
+                    if self.transformer_pruning_config.use_logits:
+                        head_importance, ffn_importance = self.get_importance_score_with_logits(dataloader, adaptor, batch_postprocessor)
+                    else:
+                        head_importance, ffn_importance = self.get_importance_score(dataloader, adaptor, batch_postprocessor)
                     head_importance = head_importance.cpu() # (num_layers, num_heads)
                     ffn_importance = ffn_importance.cpu() # (num_layers, intermediate_size)
 
@@ -216,6 +231,10 @@ TextPruner will infer the ``base_model_prefix`` so we can leave its value as ``N
                     self.prune_with_masks(keep_shape=keep_shape, save_model=False)
                 else:
                     self.prune_with_masks(keep_shape=True, save_model=False)
+
+        #clear cache
+        self.soft_labels = []
+        self.shoule_cache_logits = True
 
         logger.info("Head and ffn masks have been generated, can be accessed via self.head_mask and self.ffn_mask")
         if save_model is True:
@@ -367,7 +386,7 @@ Call TransformerPruner.save_masks or TransformerPruner.save_jit_model manually i
         ffn_importance = torch.zeros(n_layers, intermediate_size).to(device) #ex. (12,3072)
         num_examples = 0.0
 
-        for batch in tqdm(dataloader, desc="Evaluating"):
+        for batch in tqdm(dataloader, desc="Calculating IS with loss"):
             if batch_postprocessor is not None:
                 batch = batch_postprocessor(batch)
             batch = move_to_device(batch, device)
@@ -377,25 +396,8 @@ Call TransformerPruner.save_masks or TransformerPruner.save_jit_model manually i
             else:
                 outputs = model(*batch)
                 batch_num_examples = len(batch[0])
-            if adaptor is None:
-                try:
-                    if isinstance(outputs, torch.Tensor):
-                        tmp_eval_loss = outputs
-                        assert len(tmp_eval_loss.size())==0
-                    elif isinstance(outputs, (list,tuple)):
-                        tmp_eval_loss = outputs[0]
-                        assert len(tmp_eval_loss.size())==0
-                    elif isinstance(outputs, abc.Mapping):
-                        tmp_eval_loss = outputs['loss']
-                    else:
-                        tmp_eval_loss = outputs.loss
-                except (KeyError, AttributeError, AssertionError) as e:
-                    logger.error("Cannot get loss from the outputs automatically! Adaptor is needed")
-                    raise e
-            else:
-                tmp_eval_loss = adaptor(outputs)
-
-            tmp_eval_loss.backward()
+            loss = infer_loss(outputs, adaptor)
+            loss.backward()
 
             for layer_num in range(n_layers):
                 weight = att_output_weights[layer_num]
@@ -405,13 +407,106 @@ Call TransformerPruner.save_masks or TransformerPruner.save_jit_model manually i
                 weight1 = ffn_inter_weights[layer_num]
                 bias1 = ffn_inter_biases[layer_num]
                 weight2 = ffn_output_weights[layer_num]
-                #ffn_importance[layer_num] += ((weight1.grad * weight1).sum(dim=1)+ bias1.grad * bias1 +(weight2.grad * weight2).sum(dim=0)).abs().detach()
                 if self.transformer_pruning_config.ffn_even_masking:
                     ffn_importance[layer_num] += ((weight1.grad * weight1).sum(dim=1)+ bias1.grad * bias1).abs().detach()
                 ffn_importance[layer_num] += ((weight2.grad * weight2).sum(dim=0)).abs().detach()
 
             model.zero_grad()
             num_examples += batch_num_examples
+
+        head_importance /= num_examples
+        ffn_importance /= num_examples
+
+        return head_importance, ffn_importance
+
+
+
+    def get_importance_score_with_logits(self, dataloader,
+                                adaptor=None, batch_postprocessor=None) -> torch.Tensor :
+        model = self.model
+
+        n_layers = self.model_structure.get_num_layers(self.base_model, ignore_model_prefix=True)
+        n_heads = self.base_model.config.num_attention_heads
+        intermediate_size = self.base_model.config.intermediate_size
+
+        device = self.general_config.device
+
+        logger.info("***** Running Forward and Backward to calcuate importance score*****")
+        logger.info(" Length of dataloader = %d", len(dataloader))
+        model.eval()
+        self.model_rep.eval()
+        head_importance = torch.zeros(n_layers, n_heads).to(device)
+
+        #get ffn weights and bias
+        ffn_inter_weights = []
+        ffn_inter_biases = []
+        ffn_output_weights = []
+        att_output_weights = []
+
+        ffn_interm = self.model_structure.get_ffn_interm(self.base_model, ignore_model_prefix=True)
+        ffn_output = self.model_structure.get_ffn_output(self.base_model, ignore_model_prefix=True)
+        att_output = self.model_structure.get_att_output(self.base_model, ignore_model_prefix=True)
+        for layer_num in range(n_layers):
+                ffn_inter_weights.append(ffn_interm[layer_num].weight) #.detach().to(device)
+                ffn_inter_biases.append(ffn_interm[layer_num].bias) #.detach().to(device)
+                ffn_output_weights.append(ffn_output[layer_num].weight) #.detach().to(device)
+                att_output_weights.append(att_output[layer_num].weight)
+
+        ffn_importance = torch.zeros(n_layers, intermediate_size).to(device) #ex. (12,3072)
+        num_examples = 0.0
+
+
+        for idx,batch in enumerate(tqdm(dataloader, desc="Calculating IS with logits")):
+            if batch_postprocessor is not None:
+                batch = batch_postprocessor(batch)
+            batch = move_to_device(batch, device)
+            if isinstance(batch,abc.Mapping):
+                outputs = model(**batch)
+                batch_num_examples = len(list(batch.values())[0])
+            else:
+                outputs = model(*batch)
+                batch_num_examples = len(batch[0])
+
+            with torch.no_grad():
+                outputs_rep = self.model_rep(**batch) if isinstance(batch,abc.Mapping) else self.model_rep(*batch)
+            logits_rep = infer_logits(outputs_rep, adaptor)
+
+            logits = infer_logits(outputs, adaptor)
+            #if self.shoule_cache_logits is True: # cache soft labels if the cache is empty
+            #    p = softmax(logits, dim=-1).detach()
+            #    self.soft_labels.append(p)
+
+            if isinstance(logits,(list,tuple)):
+                entropy = 0
+                for logits_p, logits_q in zip(logits_rep, logits):
+                    current_p = softmax(logits_p, dim=-1).detach()
+                    current_q = logits_q
+                    entropy += -(log_softmax(current_q,dim=-1) * current_p).sum(dim=-1).mean()
+            else:
+                current_p = softmax(logits_rep, dim=-1).detach() #p = softmax(logits, dim=-1).detach() #self.soft_labels[idx]
+                #current_p = self.soft_labels[idx]
+                current_q = logits
+                entropy = - (log_softmax(current_q,dim=-1) * current_p).sum(dim=-1).mean()
+            entropy.backward()
+
+
+            for layer_num in range(n_layers):
+                weight = att_output_weights[layer_num]
+                head_importance[layer_num] += (weight.grad * weight).view(weight.size(0),n_heads, -1).sum(dim=(0,2)).abs().detach()  # (num_heads, )
+
+            for layer_num in range(n_layers):
+                weight1 = ffn_inter_weights[layer_num]
+                bias1 = ffn_inter_biases[layer_num]
+                weight2 = ffn_output_weights[layer_num]
+                if self.transformer_pruning_config.ffn_even_masking:
+                    ffn_importance[layer_num] += ((weight1.grad * weight1).sum(dim=1)+ bias1.grad * bias1).abs().detach()
+                ffn_importance[layer_num] += ((weight2.grad * weight2).sum(dim=0)).abs().detach()
+
+            model.zero_grad()
+            num_examples += batch_num_examples
+
+        if self.shoule_cache_logits is True:
+            self.shoule_cache_logits = False
 
         head_importance /= num_examples
         ffn_importance /= num_examples
