@@ -135,7 +135,7 @@ Configurations的说明参见[Configurations](#configurations)。
 
 要进行词表裁剪，用户应提供一个文本文件或字符串列表（list of strings）。TextPruner将从model和tokenizer中移除未在文本文件或列表中出现过的token。
 
-具体的例子参见[examples/vocabulary_pruning](examples/vocabulary_pruning)
+具体的例子参见[examples/vocabulary_pruning](examples/vocabulary_pruning)和[examples/vocabulary_pruning_xnli](examples/vocabulary_pruning_xnli).
 
 #### 在脚本中使用
 
@@ -179,8 +179,11 @@ textpruner-cli  \
   * loss可以通过`output['loss']`或`output.loss`得到，其中`output`是模型的输出
   
   那么用户应提供一个`adaptor`函数（以模型的输出为输入，返回loss）给`TransformerPruner`。
+* 当运行于自监督裁剪模式，TextPruner需要模型返回的logits。此时需要`adaptor`函数返回logits。详细参见`TransformerPruningConfig`中的`use_logits`选项。
 
 具体的例子参见[examples/transformer_pruning](examples/transformer_pruning)
+
+自监督裁剪的例子参见[examples/transformer_pruning_xnli](examples/transformer_pruning_xnli)
 
 #### 在脚本中使用
 

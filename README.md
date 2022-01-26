@@ -139,7 +139,7 @@ We demonstrate the basic usage below.
 
 To perform vocabulary pruning, users should provide a text file or a list of strings. The tokens that do not appear in the texts are removed from the model and the tokenizer.
 
-See the examples at [examples/vocabulary_pruning](examples/vocabulary_pruning).
+See the examples at [examples/vocabulary_pruning](examples/vocabulary_pruning) and [examples/vocabulary_pruning_xnli](examples/vocabulary_pruning_xnli).
 
 #### Use TextPruner as a package
 
@@ -180,14 +180,18 @@ textpruner-cli  \
 ### Transformer Pruning
 
 * To perform transformer pruning on a dataset, a `dataloader` of the dataset should be provided. The `dataloader` should return both the inputs and the labels. 
-* TextPruner needs the loss return by the model to calculate neuron importance scores. TextPruner will try to guess which element in the model output is the loss. If none of the following is true:
+* TextPruner needs the loss returned by the model to calculate neuron importance scores. TextPruner will try to guess which element in the model output is the loss. If none of the following is true:
   * the model returns  a single element, which is the loss;
   * the model output is a list or a tuple. Loss is its first element;
   * the loss of can be accessed by `output['loss'] ` or `output.loss` where `output` is the model output
 
   users should provide an `adaptor` function (which takes the output of the model and return the loss) to the `TransformerPruner`.
 
+  * If running in *self-supervised* mode, TextPruner needs the logits returned by the model to calculate importance scores. In this case,  the `adaptor` should return the logits. Check the `use_logits` option in `TransformerPruningConfig` for details.
+
 See the examples at [examples/transformer_pruning](examples/transformer_pruning).
+
+For self-supervised pruning, see the examples [examples/transformer_pruning_xnli](examples/transformer_pruning_xnli).
 
 #### Use TextPruner as a package
 
