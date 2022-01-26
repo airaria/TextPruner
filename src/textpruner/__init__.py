@@ -1,4 +1,4 @@
-__version__ = "1.0.post3"
+__version__ = "1.0.1"
 
 from .pruners import VocabularyPruner, TransformerPruner, PipelinePruner
 from .configurations import GeneralConfig, VocabularyPruningConfig, TransformerPruningConfig

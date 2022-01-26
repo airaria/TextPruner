@@ -31,6 +31,10 @@
 - 中文XLNet预训练模型：https://github.com/ymcui/Chinese-XLNet
 - 少数民族语言预训练模型CINO：https://github.com/ymcui/Chinese-Minority-PLM
 
+## 新闻
+
+
+* Jan 26, 2022 （1.0.1版本功能更新） 添加了对自监督裁剪的支持。通过`TransformerPruningConfig`中的`use_logits`设置。
 
 ## 目录
 

@@ -32,6 +32,9 @@ You may also be interested in,
 - Chinese XLNet: https://github.com/ymcui/Chinese-XLNet
 - CINO: https://github.com/ymcui/Chinese-Minority-PLM
 
+## News
+
+* Jan 26, 2022 （new functionality in v1.0.1) Added support for self-supervised pruning via `use_logits` option in `TransformerPruningConfig`.
 
 ## Table of Contents
 
@@ -46,6 +49,8 @@ You may also be interested in,
 | [Experiments](#experiments) | Pruning experiments on typical tasks |
 | [FAQ](#faq) | Frequently asked questions |
 | [Follow Us](#follow-us) | - |
+
+
 
 ## Introduction
 
