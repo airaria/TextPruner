@@ -33,8 +33,9 @@
 
 ## 新闻
 
+* [Mar 4, 2022] TextPruner论文被[ACL 2022 demo](https://2022.aclweb.org)录用。论文将在camera-ready稿件完成之后放出。
 
-* Jan 26, 2022 （1.0.1版本功能更新） 添加了对自监督裁剪的支持。通过`TransformerPruningConfig`中的`use_logits`设置。
+* [Jan 26, 2022] （1.0.1版本功能更新） 添加了对自监督裁剪的支持。通过`TransformerPruningConfig`中的`use_logits`设置。
 
 ## 目录
 

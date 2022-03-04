@@ -34,7 +34,9 @@ You may also be interested in,
 
 ## News
 
-* Jan 26, 2022 （new functionality in v1.0.1) Added support for self-supervised pruning via `use_logits` option in `TransformerPruningConfig`.
+* [Mar 4, 2022] We are delighted to annouce that TextPruner has been accepted to [ACL 2022 demo](https://2022.aclweb.org). The paper will be available when we finish the camera-ready version.
+
+* [Jan 26, 2022] （new functionality in v1.0.1) Added support for self-supervised pruning via `use_logits` option in `TransformerPruningConfig`.
 
 ## Table of Contents
 
