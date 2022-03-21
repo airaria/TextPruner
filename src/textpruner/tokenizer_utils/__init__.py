@@ -2,3 +2,6 @@ from .roberta_gpt2_tokenizer import RobertaGPT2Tokenizer
 from .subword_tokenizer import SubwordTokenizer
 from .sp_tokenizer import SentencepieceTokenizer
 from .xlmr_sp_tokenizer import XLMRSentencepieceTokenizer
+from .xlm_tokenizer import XLMTokenizer
+from .t5_sp_tokenizer import T5SentencepieceTokenizer
+from .mt5_sp_tokenizer import MT5SentencepieceTokenizer
