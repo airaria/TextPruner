@@ -21,5 +21,21 @@ MODEL_MAP = {
     'xlm-roberta':
         {'resizer':model_utils.XLMRobertaVocabResizer,
           'tokenizer_helper': tokenizer_utils.XLMRSentencepieceTokenizer,
-          'structure': model_utils.XLMRobertaStructure}
+          'structure': model_utils.XLMRobertaStructure},
+    'xlm':
+        {'resizer':model_utils.XLMVocabResizer,
+          'tokenizer_helper':tokenizer_utils.XLMTokenizer,
+          'structure':model_utils.XLMStructure},
+    'bart':
+        {'resizer' : model_utils.BartVocabResizer,
+            'tokenizer_helper' : tokenizer_utils.RobertaGPT2Tokenizer,
+            'structure': model_utils.BartStructure},
+    't5':
+        {'resizer' : model_utils.T5VocabResizer,
+            'tokenizer_helper' : tokenizer_utils.T5SentencepieceTokenizer,
+            'structure' : model_utils.T5Structure},
+    'mt5':
+        {'resizer' : model_utils.MT5VocabResizer,
+            'tokenizer_helper' : tokenizer_utils.MT5SentencepieceTokenizer,
+            'structure' : model_utils.MT5Structure},
 }
