@@ -66,12 +66,23 @@ TextPruner目前支持词表裁剪和transformer裁剪，参见[裁剪模式](#�
 
 TextPruner在典型任务上的实验效果，参见[实验结果](#实验)。
 
+### 支持模型
+
 TextPruner目前支持[Transformers](https://github.com/huggingface/transformers)库中的如下预训练模型:
-* BERT
-* Albert
-* Electra
-* RoBERTa
-* XLM-RoBERTa
+
+
+| 模型 | 词表裁剪 | Transformer裁剪 |
+|-|:-:|:-:|
+| BERT | :heavy_check_mark: | :heavy_check_mark: |  
+| ALBERT | :heavy_check_mark: | :heavy_check_mark: |  
+| RoBERTa | :heavy_check_mark: | :heavy_check_mark: |  
+| ELECTRA| :heavy_check_mark: | :heavy_check_mark: |  
+| XLM-RoBERTa | :heavy_check_mark: | :heavy_check_mark: |
+|XLM |  :heavy_check_mark: | :x: |
+|BART |  :heavy_check_mark: | :x: |
+|T5 |  :heavy_check_mark: | :x: |
+|mT5 |  :heavy_check_mark: | :x: |
+
 
 API文档参见[在线文档](https://textpruner.readthedocs.io)
 

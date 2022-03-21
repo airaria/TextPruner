@@ -69,12 +69,24 @@ To use TextPruner, users can either import TextPruner into the python scripts or
 For the performance of the pruned model on typical tasks, see [Experiments](#experiments).
 
 
+
+
+### Supporting Models
+
 TextPruner currently supports the following pre-trained models in [transformers](https://github.com/huggingface/transformers):
-* BERT
-* Albert
-* Electra
-* RoBERTa
-* XLM-RoBERTa
+
+| Model | Vocabualry Pruning | Transformer Pruning |
+|-|:-:|:-:|
+| BERT | :heavy_check_mark: | :heavy_check_mark: |  
+| ALBERT | :heavy_check_mark: | :heavy_check_mark: |  
+| RoBERTa | :heavy_check_mark: | :heavy_check_mark: |  
+| ELECTRA| :heavy_check_mark: | :heavy_check_mark: |  
+| XLM-RoBERTa | :heavy_check_mark: | :heavy_check_mark: |
+|XLM |  :heavy_check_mark: | :x: |
+|BART |  :heavy_check_mark: | :x: |
+|T5 |  :heavy_check_mark: | :x: |
+|mT5 |  :heavy_check_mark: | :x: |
+
 
 See the [online documentation](https://textpruner.readthedocs.io) for the API reference.
 
