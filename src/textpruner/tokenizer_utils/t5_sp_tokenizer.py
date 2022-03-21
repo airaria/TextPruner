@@ -39,21 +39,7 @@ class T5SentencepieceTokenizer:
         
     @classmethod
     def save_vocab(cls, tokenizer, token_ids, outdir):
-        '''
-        fairseq_offset = 1
-        # {"<s>": 0, "<pad>": 1, "</s>": 2, "<unk>": 3}
-        fairseq_special_tokens_ids = [0, 1, 2, 3]
-        fairseq_special_tokens_ids.append(
-            len(tokenizer.sp_model) + fairseq_offset)  # ["<mask>"]
-        # remove special tokens
-        token_ids = [
-            t for t in token_ids if t not in fairseq_special_tokens_ids]
 
-        # special tokens + normal tokens
-        spm_token_ids = [0, 1, 2] + \
-            [t-fairseq_offset for t in token_ids]
-        assert len(spm_token_ids) == len(set(spm_token_ids))
-        '''
         
         spm_token_ids = list(set(token_ids) - set(cls.additional_special_token_ids))
         m = sp_pb2_model.ModelProto()

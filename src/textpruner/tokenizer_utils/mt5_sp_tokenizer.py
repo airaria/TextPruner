@@ -31,12 +31,7 @@ class MT5SentencepieceTokenizer:
             cls.find_addition_special_token_ids(tokenizer)
             special_token_ids.extend(cls.additional_special_token_ids)
             special_token_ids = sorted(list(set(special_token_ids)))
-            # tokenizer.add_special_tokens({
-            #     'additional_special_tokens' : [f"\342\226\201<extra_id_{i}>" for i in range(100)]
-            # })
-        
-        #print('special_token_ids', special_token_ids)
-        #print('additional_special_token_ids', cls.additional_special_token_ids)
+
         normal_token_ids = []
         if dataiter is not None:
             token_ids_counter = count_unique_tokens(dataiter, tokenizer)
@@ -53,37 +48,16 @@ class MT5SentencepieceTokenizer:
         
     @classmethod
     def save_vocab(cls, tokenizer, token_ids, outdir):
-        '''
-        fairseq_offset = 1
-        # {"<s>": 0, "<pad>": 1, "</s>": 2, "<unk>": 3}
-        fairseq_special_tokens_ids = [0, 1, 2, 3]
-        fairseq_special_tokens_ids.append(
-            len(tokenizer.sp_model) + fairseq_offset)  # ["<mask>"]
-        # remove special tokens
-        token_ids = [
-            t for t in token_ids if t not in fairseq_special_tokens_ids]
 
-        # special tokens + normal tokens
-        spm_token_ids = [0, 1, 2] + \
-            [t-fairseq_offset for t in token_ids]
-        assert len(spm_token_ids) == len(set(spm_token_ids))
-        '''
         spm_token_ids = token_ids
-        #spm_token_ids = list(set(token_ids) - set(cls.additional_special_token_ids))
+
         spm_token_ids = sorted(spm_token_ids)
-        #print(f'selected token_ids {spm_token_ids} ')
+
         m = sp_pb2_model.ModelProto()
         m.ParseFromString(tokenizer.sp_model.serialized_model_proto())
         spm_tokens = set([m.pieces[i].piece for i in spm_token_ids])
         new_pieces = [p for p in m.pieces if p.piece in spm_tokens]
         
-
-
-        #print(new_pieces)
-        # for i, p in enumerate(new_pieces):
-        #     if i % 100 == 0:
-        #         print(f'[{p.piece}] [{p.type}] [{p.score}]')
-
         del m.pieces[:]
         m.pieces.extend(new_pieces)
 
