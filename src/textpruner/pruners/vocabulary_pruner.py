@@ -89,8 +89,11 @@ TextPruner will infer the ``base_model_prefix`` so we can leave its value as ``N
 
 
     def save_model(self, dir_name = None) -> str:
-
-        vocab_size = len(self.pruned_token_ids)
+        
+        if self.model_type.lower() in ['t5', 'mt5']:
+            vocab_size = self.base_model.shared.weight.shape[0]
+        else:
+            vocab_size = len(self.pruned_token_ids)
         self.base_model.config.vocab_size = vocab_size
 
         if dir_name is None:
