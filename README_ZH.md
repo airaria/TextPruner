@@ -35,7 +35,7 @@
 
 * [Mar 21, 2022] （1.1版本功能更新) 添加了针对XLM、BART、T5和mT5模型的词表裁剪功能。
 
-* [Mar 4, 2022] TextPruner论文被[ACL 2022 demo](https://2022.aclweb.org)录用。论文将在camera-ready稿件完成之后放出。
+* [Mar 4, 2022] TextPruner论文 [*TextPruner: A Model Pruning Toolkit for Pre-Trained Language Models*](https://arxiv.org/abs/2203.15996) 被 [ACL 2022 demo](https://2022.aclweb.org)录用。
 
 * [Jan 26, 2022] （1.0.1版本功能更新） 添加了对自监督裁剪的支持。通过`TransformerPruningConfig`中的`use_logits`设置。
 
@@ -68,6 +68,8 @@ TextPruner目前支持词表裁剪和transformer裁剪，参见[裁剪模式](#�
 要使用TextPruner，用户可以在python脚本中导入TextPruner或直接在命令行运行TextPruner命令行工具，参见[使用方法](#使用方法)。
 
 TextPruner在典型任务上的实验效果，参见[实验结果](#实验)。
+
+论文链接：[TextPruner: A Model Pruning Toolkit for Pre-Trained Language Models](https://arxiv.org/abs/2203.15996)
 
 ### 支持模型
 

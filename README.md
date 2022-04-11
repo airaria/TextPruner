@@ -36,7 +36,7 @@ You may also be interested in,
 
 * [Mar 21, 2022] （new functionality in v1.1) Added vocabulary pruning for XLM, BART, T5 and mT5 models.
 
-* [Mar 4, 2022] We are delighted to announce that TextPruner has been accepted to [ACL 2022 demo](https://2022.aclweb.org). The paper will be available when we finish the camera-ready version.
+* [Mar 4, 2022] We are delighted to announce that TextPruner paper [*TextPruner: A Model Pruning Toolkit for Pre-Trained Language Models*](https://arxiv.org/abs/2203.15996) has been accepted to [ACL 2022 demo](https://2022.aclweb.org).
 
 * [Jan 26, 2022] （new functionality in v1.0.1) Added support for self-supervised pruning via `use_logits` option in `TransformerPruningConfig`.
 
@@ -72,7 +72,7 @@ To use TextPruner, users can either import TextPruner into the python scripts or
 
 For the performance of the pruned model on typical tasks, see [Experiments](#experiments).
 
-
+Paper: [*TextPruner: A Model Pruning Toolkit for Pre-Trained Language Models*](https://arxiv.org/abs/2203.15996)
 
 
 ### Supporting Models
