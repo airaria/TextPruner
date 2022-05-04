@@ -1,7 +1,10 @@
-from .utils import DefaultModelVocabResizer
+import torch
+from torch import nn
+
 from .model_structure import ModelStructure
-import torch 
-from torch import nn 
+from .utils import DefaultModelVocabResizer
+
+
 class MT5VocabResizer(DefaultModelVocabResizer):
     model_name : str = 'mt5'
 
@@ -9,45 +12,31 @@ class MT5VocabResizer(DefaultModelVocabResizer):
     def set_embeddings(cls, model, token_ids):
         def _prun(old_weight, token_ids):
             pruned_word_embeddings_weight = torch.index_select(
-                old_weight, 0, index=torch.LongTensor(token_ids).to(old_weight.device))     
+                old_weight, 0, index=torch.LongTensor(token_ids).to(old_weight.device))
             return pruned_word_embeddings_weight 
 
-        
         vocab_size = model.shared.weight.shape[0]
         max_token_ids = token_ids[-1]
         tokens_in_embed_notin_tokenizer_ids = list(range(max_token_ids+1, vocab_size))
         token_ids_temp = token_ids[:]
         token_ids_temp.extend(tokens_in_embed_notin_tokenizer_ids)
 
-        
         model.config.vocab_size = len(token_ids_temp)
 
-        old_word_embeddings_shared, old_word_embeddings_encoder, old_word_embeddings_decoder = \
-            model.shared, model.encoder.embed_tokens, model.decoder.embed_tokens
+        old_word_embeddings_shared = model.shared
 
-        old_word_embeddings_shared_weight, old_word_embeddings_encoder_weight, old_word_embeddings_decoder_weight = \
-            old_word_embeddings_shared.weight, old_word_embeddings_encoder.weight, old_word_embeddings_decoder.weight
-
-        pruned_word_embeddings_shared_weight, pruned_word_embeddings_encoder_weight, pruned_word_embeddings_decoder_weight = \
-            _prun(old_word_embeddings_shared_weight, token_ids_temp), _prun(old_word_embeddings_encoder_weight, token_ids_temp), _prun(old_word_embeddings_decoder_weight, token_ids_temp)
+        old_word_embeddings_shared_weight = old_word_embeddings_shared.weight
+        pruned_word_embeddings_shared_weight = _prun(old_word_embeddings_shared_weight, token_ids_temp)
 
         pruned_num_tokens, embedding_dim = pruned_word_embeddings_shared_weight.shape
 
         pruned_word_embeddings_shared = nn.Embedding(
             pruned_num_tokens, embedding_dim).to(old_word_embeddings_shared_weight.device)
         pruned_word_embeddings_shared.weight.data[:] = pruned_word_embeddings_shared_weight[:]
-
-        pruned_word_embeddings_encoder = nn.Embedding(
-            pruned_num_tokens, embedding_dim).to(old_word_embeddings_shared_weight.device)
-        pruned_word_embeddings_encoder.weight.data[:] = pruned_word_embeddings_encoder_weight[:]
-
-        pruned_word_embeddings_decoder = nn.Embedding(
-            pruned_num_tokens, embedding_dim).to(old_word_embeddings_shared_weight.device)
-        pruned_word_embeddings_decoder.weight.data[:] = pruned_word_embeddings_decoder_weight[:]
         
         model.shared = pruned_word_embeddings_shared
-        model.encoder.embed_tokens = pruned_word_embeddings_encoder
-        model.decoder.embed_tokens = pruned_word_embeddings_decoder    
+        model.encoder.embed_tokens = model.shared
+        model.decoder.embed_tokens = model.shared
 
 class MT5Structure(ModelStructure):
     MODEL_PREFIX: str = "transformer."
