@@ -1,8 +1,10 @@
+import logging
 import re
+from typing import Dict
+
 import torch
 from torch import nn
-import logging
-from typing import Dict
+
 logger = logging.getLogger(__name__)
 
 class DefaultModelVocabResizer:
@@ -31,6 +33,8 @@ class DefaultModelVocabResizer:
         if output_embedding_layer is None:
             return False
         output_embedding_layer.weight = model.get_input_embeddings().weight
+        if output_embedding_layer.bias is None:
+            return True
         output_embedding_layer.bias.data = torch.index_select(
             output_embedding_layer.bias.data, 0, index=torch.LongTensor(token_ids).to(output_embedding_layer.weight.device))
         return True
