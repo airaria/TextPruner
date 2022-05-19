@@ -36,7 +36,7 @@ You may also be interested in,
 
 * [Mar 21, 2022] （new functionality in v1.1) Added vocabulary pruning for XLM, BART, T5 and mT5 models.
 
-* [Mar 4, 2022] We are delighted to announce that TextPruner paper [*TextPruner: A Model Pruning Toolkit for Pre-Trained Language Models*](https://arxiv.org/abs/2203.15996) has been accepted to [ACL 2022 demo](https://2022.aclweb.org).
+* [Mar 4, 2022] We are delighted to announce that TextPruner paper [*TextPruner: A Model Pruning Toolkit for Pre-Trained Language Models*](https://aclanthology.org/2022.acl-demo.4/) has been accepted to [ACL 2022 demo](https://2022.aclweb.org).
 
 * [Jan 26, 2022] （new functionality in v1.0.1) Added support for self-supervised pruning via `use_logits` option in `TransformerPruningConfig`.
 
@@ -72,7 +72,7 @@ To use TextPruner, users can either import TextPruner into the python scripts or
 
 For the performance of the pruned model on typical tasks, see [Experiments](#experiments).
 
-Paper: [*TextPruner: A Model Pruning Toolkit for Pre-Trained Language Models*](https://arxiv.org/abs/2203.15996)
+Paper: [*TextPruner: A Model Pruning Toolkit for Pre-Trained Language Models*](https://aclanthology.org/2022.acl-demo.4/)
 
 
 ### Supporting Models
@@ -466,6 +466,23 @@ If you are interested in applying knowledge distillation, please refer to our [T
 
 if you want to achieve the best performance, you may consider applying both distillation and pruning.
 
+## Citation
+If you find TextPruner is helpful, please cite our [paper](https://aclanthology.org/2022.acl-demo.4):
+```
+@inproceedings{yang-etal-2022-textpruner,
+    title = "{T}ext{P}runer: A Model Pruning Toolkit for Pre-Trained Language Models",
+    author = "Yang, Ziqing  and
+      Cui, Yiming  and
+      Chen, Zhigang",
+    booktitle = "Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics: System Demonstrations",
+    month = may,
+    year = "2022",
+    address = "Dublin, Ireland",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.acl-demo.4",
+    pages = "35--43"
+}
+```
 
 ## Follow Us
 Follow our official WeChat account to keep updated with our latest technologies!
