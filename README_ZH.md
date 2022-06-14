@@ -35,7 +35,7 @@
 
 * [Mar 21, 2022] （1.1版本功能更新) 添加了针对XLM、BART、T5和mT5模型的词表裁剪功能。
 
-* [Mar 4, 2022] TextPruner论文 [*TextPruner: A Model Pruning Toolkit for Pre-Trained Language Models*](https://arxiv.org/abs/2203.15996) 被 [ACL 2022 demo](https://2022.aclweb.org)录用。
+* [Mar 4, 2022] TextPruner论文 [*TextPruner: A Model Pruning Toolkit for Pre-Trained Language Models*](https://aclanthology.org/2022.acl-demo.4/) 被 [ACL 2022 demo](https://2022.aclweb.org)录用。
 
 * [Jan 26, 2022] （1.0.1版本功能更新） 添加了对自监督裁剪的支持。通过`TransformerPruningConfig`中的`use_logits`设置。
 
@@ -69,7 +69,7 @@ TextPruner目前支持词表裁剪和transformer裁剪，参见[裁剪模式](#�
 
 TextPruner在典型任务上的实验效果，参见[实验结果](#实验)。
 
-论文链接：[TextPruner: A Model Pruning Toolkit for Pre-Trained Language Models](https://arxiv.org/abs/2203.15996)
+论文链接：[TextPruner: A Model Pruning Toolkit for Pre-Trained Language Models](https://aclanthology.org/2022.acl-demo.4/)
 
 ### 支持模型
 
@@ -463,6 +463,24 @@ A: 知识蒸馏与模型裁剪都是减小模型体积的主流手段：
 如果你对知识蒸馏感兴趣，可以参见我们的知识蒸馏工具包[TextBrewer](http://textbrewer.hfl-rc.com)。
 
 如果你想取得最好的模型压缩效果，或许可以尝试同时采用蒸馏与裁剪这两种手段。
+
+## 引用
+如果TextPruner有助于您的研究，请引用以下[论文](https://aclanthology.org/2022.acl-demo.4):
+```
+@inproceedings{yang-etal-2022-textpruner,
+    title = "{T}ext{P}runer: A Model Pruning Toolkit for Pre-Trained Language Models",
+    author = "Yang, Ziqing  and
+      Cui, Yiming  and
+      Chen, Zhigang",
+    booktitle = "Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics: System Demonstrations",
+    month = may,
+    year = "2022",
+    address = "Dublin, Ireland",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.acl-demo.4",
+    pages = "35--43"
+}
+```
 
 ## 关注我们
 
