@@ -314,18 +314,18 @@ Call TransformerPruner.save_masks or TransformerPruner.save_jit_model manually i
 
             # sort query, key, value based on the scores
             query_weight, query_bias = rearange_weights(query_weight,query_bias,head_mask[layer_num],head_size,keep_shape)
-            att_queries[layer_num].weight = torch.nn.Parameter(query_weight)
-            att_queries[layer_num].bias = torch.nn.Parameter(query_bias)
+            att_queries[layer_num].weight = torch.nn.Parameter(query_weight.contiguous())
+            att_queries[layer_num].bias = torch.nn.Parameter(query_bias.contiguous())
             key_weight, key_bias = rearange_weights(key_weight,key_bias,head_mask[layer_num],head_size,keep_shape)
-            att_keys[layer_num].weight = torch.nn.Parameter(key_weight)
-            att_keys[layer_num].bias = torch.nn.Parameter(key_bias)
+            att_keys[layer_num].weight = torch.nn.Parameter(key_weight.contiguous())
+            att_keys[layer_num].bias = torch.nn.Parameter(key_bias.contiguous())
             value_weight, value_bias = rearange_weights(value_weight,value_bias,head_mask[layer_num],head_size,keep_shape)
-            att_values[layer_num].weight = torch.nn.Parameter(value_weight)
-            att_values[layer_num].bias = torch.nn.Parameter(value_bias)
+            att_values[layer_num].weight = torch.nn.Parameter(value_weight.contiguous())
+            att_values[layer_num].bias = torch.nn.Parameter(value_bias.contiguous())
 
             output_weight, _ = rearange_weights(output_weight.transpose(0,1), None, head_mask[layer_num],head_size,keep_shape)
             output_weight = output_weight.transpose(0,1)
-            att_outputs[layer_num].weight = torch.nn.Parameter(output_weight)
+            att_outputs[layer_num].weight = torch.nn.Parameter(output_weight.contiguous())
 
 
     def reorder_ffn_weights(self, ffn_mask, keep_shape = False):
@@ -348,7 +348,7 @@ Call TransformerPruner.save_masks or TransformerPruner.save_jit_model manually i
             ffn_interm[layer_num].bias = torch.nn.Parameter(inter_bias)
 
             output_weight, _ = rearange_weights(output_weight.transpose(0,1), None, ffn_mask[layer_num], head_size, keep_shape)
-            output_weight = output_weight.transpose(0,1)
+            output_weight = output_weight.transpose(0,1).contiguous()
             ffn_output[layer_num].weight = torch.nn.Parameter(output_weight)
 
 
@@ -526,7 +526,7 @@ def rearange_weights(weight, bias, mask, head_size, keep_shape = False):
         new_num_heads = num_heads
 
     ##reshape back
-    selected_weight = selected_weight.view(new_num_heads*head_size, weight.size(1))
+    selected_weight = selected_weight.view(new_num_heads*head_size, weight.size(1)).contiguous()
 
     selected_bias = None
     if bias is not None:
@@ -536,7 +536,7 @@ def rearange_weights(weight, bias, mask, head_size, keep_shape = False):
             selected_bias = bias_dim2.masked_select(mask_dim2)
         else:
             selected_bias = torch.mul(bias_dim2, mask_dim2)
-        selected_bias = selected_bias.view(new_num_heads*head_size)
+        selected_bias = selected_bias.view(new_num_heads*head_size).contiguous()
 
     return selected_weight, selected_bias
 
