@@ -40,7 +40,7 @@ TextPruner will infer the ``base_model_prefix`` so we can leave its value as ``N
         self.output_dir = self.general_config.output_dir
         base_model, model_type = infer_model_type(model, base_model_prefix)
         assert model_type in MODEL_MAP, \
-            f"Model type {self.model_type} is not supported, or not understood. Model type must be one of {list(MODEL_MAP.keys())}"
+            f"Model type {model_type} is not supported, or not understood. Model type must be one of {list(MODEL_MAP.keys())}"
         self.base_model = base_model
         self.model_type = model_type
 
