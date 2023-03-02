@@ -31,8 +31,9 @@ class DefaultModelVocabResizer:
         if output_embedding_layer is None:
             return False
         output_embedding_layer.weight = model.get_input_embeddings().weight
-        output_embedding_layer.bias.data = torch.index_select(
-            output_embedding_layer.bias.data, 0, index=torch.LongTensor(token_ids).to(output_embedding_layer.weight.device))
+        if hasattr(output_embedding_layer,'bias') and output_embedding_layer.bias is not None:
+            output_embedding_layer.bias.data = torch.index_select(
+                output_embedding_layer.bias.data, 0, index=torch.LongTensor(token_ids).to(output_embedding_layer.weight.device))
         return True
 
 
