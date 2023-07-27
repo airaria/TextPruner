@@ -18,6 +18,10 @@ MODEL_MAP = {
         {'resizer': model_utils.RobertaVocabResizer,
           'tokenizer_helper' : tokenizer_utils.RobertaGPT2Tokenizer,
           'structure': model_utils.RobertaStructure},
+    'camembert':
+        {'resizer': model_utils.RobertaVocabResizer,
+          'tokenizer_helper' : tokenizer_utils.RobertaGPT2Tokenizer,
+          'structure': model_utils.RobertaStructure},
     'xlm-roberta':
         {'resizer':model_utils.XLMRobertaVocabResizer,
           'tokenizer_helper': tokenizer_utils.XLMRSentencepieceTokenizer,
