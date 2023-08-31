@@ -41,10 +41,7 @@ class DefaultModelVocabResizer:
 def get_word_embeddings(model):
     state_dict = model.state_dict()
     layer_template = "embeddings.word_embeddings"
-    layer_names = []
-    for key in state_dict:
-        if layer_template in key:
-            layer_names.append(key)
+    layer_names = [key for key in state_dict if layer_template in key]
     assert len(
         layer_names) == 1, f"Invalid model structure with ambiguous word embeddings: {layer_names}"
     word_embedding_weight = state_dict[layer_names[0]]
